@@ -21,12 +21,16 @@ def build_note_dictionaries(note_names, add_octave_no=True):
 			# Ajouter le numéro de l'octave au nom de la note si add_octave_no est vrai
 			full_note_name = note_names[note] + (str(octave) if add_octave_no else "")
 			midi_to_name[midi_no] = full_note_name
-
 			# Garder les numéros de notes dans name_to_midi entre 0 et 11 si add_octave_no est faux
 			name_to_midi[full_note_name] = midi_no if add_octave_no else midi_no % NOTES_PER_OCTAVE
 	return midi_to_name, name_to_midi
 
 def build_print_note_name_callback(midi_to_name):
+	def callback(midi_msg):
+		if midi_msg.type == "note_on" and midi_msg.velocity != 0:
+			print(midi_to_name[midi_msg.note])
+	return callback
+
 	pass
 
 def build_print_chord_name_callback(chord_names_and_notes, name_to_midi):
