@@ -31,14 +31,29 @@ def build_print_note_name_callback(midi_to_name):
 			print(midi_to_name[midi_msg.note])
 	return callback
 
-	pass
-
 def build_print_chord_name_callback(chord_names_and_notes, name_to_midi):
 	# Construire le dictionnaire d'assocations entre état des notes et accord joué.
-	
-	# Créez et retourner le callback
-	pass
+	chords = {}
 
+	for name, notes in chord_names_and_notes.items():
+		chord_notes = [False] * 12
+		for note in notes:
+			name_to_midi[note]
+			chord_notes[name_to_midi[note] % NOTES_PER_OCTAVE] = True
+		chords[tuple(chord_notes)] = name
+
+	def callback(midi_msg):
+		global keyboard_state
+		if midi_msg.type == "note_on" and midi_msg.velocity != 0:
+			keyboard_state[midi_msg.note % NOTES_PER_OCTAVE] = True
+			keyboard_state_tupple = tupple(keyboard_state)
+			if keyboard_state_tupple in chords:
+				print(chords[keyboard_state_tupple])
+		elif midi_msg.type == "note_off" or (midi_msg.type == "note_on" and midi_msg.velocity == 0):
+			keyboard_state[midi_msg.note % NOTES_PER_OCTAVE] =False
+	return callback
+
+keyboard_state = [False] * 12
 
 def main():
 	PORT_MIDI = "UnPortMIDI 0"
